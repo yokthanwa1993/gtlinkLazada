@@ -1,0 +1,27 @@
+{
+  "name": "lazada-api-test",
+  "version": "1.0.0",
+  "description": "Test Lazada Adsense API with Cookie Extraction",
+  "main": "api.js",
+  "scripts": {
+    "start": "node combined-server.js",
+    "get-cookies": "node getcookiesLazada.js"
+  },
+  "dependencies": {
+    "@types/node-fetch": "^2.6.2",
+    "dotenv": "^16.4.5",
+    "node-cron": "^4.2.1",
+    "node-fetch": "^2.6.7",
+    "puppeteer-core": "^22.0.0"
+  },
+
+  "keywords": [
+    "lazada",
+    "api",
+    "typescript",
+    "puppeteer",
+    "cookies"
+  ],
+  "author": "",
+  "license": "MIT"
+}

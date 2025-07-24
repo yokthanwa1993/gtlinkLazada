@@ -69,6 +69,12 @@ console.log('🕐 Cookie Scheduler เริ่มทำงาน...');
 console.log(`📅 Cron Schedule: ${cronSchedule}`);
 console.log('⏰ ตามเวลาไทย (Asia/Bangkok)');
 
+// ตรวจสอบ environment variables
+if (!process.env.EMAIL || !process.env.PASSWORD) {
+  console.error('❌ ไม่พบ EMAIL หรือ PASSWORD ใน environment variables');
+  console.log('💡 กรุณาตั้งค่า EMAIL และ PASSWORD ใน CapRover App Configs');
+}
+
 cron.schedule(cronSchedule, () => {
   const now = new Date();
   console.log(`\n⏰ [${now.toISOString()}] เริ่มดึง cookies อัตโนมัติ...`);
@@ -154,15 +160,10 @@ const server = http.createServer(async (req, res) => {
       }));
     }
     
-  } else if (req.method === 'GET' && url.pathname === '/api/v1/health') {
-    // Health check
-    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-    res.end(JSON.stringify({ 
-      success: true,
-      status: 'ok', 
-      service: 'Lazada Adsense API + Cookie Scheduler',
-      time: new Date().toISOString()
-    }));
+  } else if (req.method === 'GET' && (url.pathname === '/api/v1/health' || url.pathname === '/health' || url.pathname === '/')) {
+    // Health check (รองรับทั้ง /health และ /api/v1/health)
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('OK');
     
   } else {
     // 404
@@ -174,8 +175,25 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`🚀 Combined Server รันที่ http://localhost:${PORT}`);
+// Handle process signals
+process.on('SIGTERM', () => {
+  console.log('📴 Received SIGTERM, shutting down gracefully...');
+  server.close(() => {
+    console.log('✅ Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('📴 Received SIGINT, shutting down gracefully...');
+  server.close(() => {
+    console.log('✅ Server closed');
+    process.exit(0);
+  });
+});
+
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Combined Server รันที่ http://0.0.0.0:${PORT}`);
   console.log(`📡 API: GET /api/v1?link=[URL]`);
   console.log(`❤️ Health: GET /api/v1/health`);
   console.log(`🍪 Cookies จะ refresh อัตโนมัติตาม schedule`);

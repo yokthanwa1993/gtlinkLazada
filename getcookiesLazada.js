@@ -3,8 +3,15 @@ require('dotenv').config(); // 👈 โหลด .env
 const puppeteer = require('puppeteer-core');
 const fs = require('fs');
 
-const BROWSERLESS_TOKEN = '77482ddfd0ec44d1c1a8b55ddf352d98';
-const BROWSERLESS_URL = `wss://${BROWSERLESS_TOKEN}@browserless.lslly.com`;
+const BROWSERLESS_TOKEN = process.env.BROWSERLESS_TOKEN;
+const BROWSERLESS_HOST = process.env.BROWSERLESS_HOST || 'browserless.lslly.com';
+
+if (!BROWSERLESS_TOKEN) {
+  console.error('❌ ไม่พบ BROWSERLESS_TOKEN ใน environment variables');
+  process.exit(1);
+}
+
+const BROWSERLESS_URL = `wss://${BROWSERLESS_TOKEN}@${BROWSERLESS_HOST}`;
 
 (async () => {
   const browser = await puppeteer.connect({

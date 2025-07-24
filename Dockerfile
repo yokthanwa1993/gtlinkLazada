@@ -30,5 +30,5 @@ RUN mkdir -p /app/screenshots
 
 EXPOSE 3000
 
-# รัน combined server (API + Scheduler)
-CMD ["npm", "start"]
+# รัน combined server (API + Scheduler) โดยตรง
+CMD ["node", "combined-server.js"]

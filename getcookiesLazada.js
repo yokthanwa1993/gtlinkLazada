@@ -73,8 +73,25 @@ const BROWSERLESS_URL = `wss://${BROWSERLESS_TOKEN}@${BROWSERLESS_HOST}`;
 
   // สร้าง cookie string สำหรับใช้ใน HTTP header
   const cookieString = cookies.map(cookie => `${cookie.name}=${cookie.value}`).join('; ');
+  
+  // สำรอง backup ปัจจุบันไปเป็น emergency backup ก่อน
+  if (fs.existsSync('cookies.backup.txt')) {
+    const currentBackup = fs.readFileSync('cookies.backup.txt', 'utf8').trim();
+    if (currentBackup) {
+      fs.writeFileSync('cookies.emergency.txt', currentBackup);
+      console.log('💾 สำรอง emergency backup เรียบร้อย');
+    }
+  }
+  
+  // บันทึกไฟล์หลัก
   fs.writeFileSync('cookies.txt', cookieString);
   console.log('✅ บันทึก cookie string ลงในไฟล์ cookies.txt เรียบร้อย');
+  
+  // สร้าง backup files หลายชั้น
+  fs.writeFileSync('cookies.backup.txt', cookieString);
+  fs.writeFileSync('cookies.persistent.txt', cookieString); // เพิ่ม persistent backup
+  fs.writeFileSync(`cookies.${Date.now()}.txt`, cookieString);
+  console.log('💾 สร้าง backup cookies หลายชั้น + persistent เรียบร้อย');
 
   console.log('🍪 Cookie String Preview:');
   console.log(cookieString.substring(0, 200) + '...');

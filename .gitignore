@@ -4,3 +4,7 @@ node_modules/
 *.png
 cookies.json
 cookies.txt
+cookies.backup.txt
+cookies.emergency.txt
+cookies.persistent.txt
+cookies.*.txt
